@@ -1,0 +1,211 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 760" width="100%" height="100%" style="background-color: #0d1321; font-family: system-ui, -apple-system, sans-serif;">
+  <defs>
+    <!-- Gradients -->
+    <linearGradient id="title-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#4edea3" />
+      <stop offset="100%" stop-color="#4cd7f6" />
+    </linearGradient>
+    <linearGradient id="ui-grad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#1b2a47" />
+      <stop offset="100%" stop-color="#111c30" />
+    </linearGradient>
+    <linearGradient id="agent-grad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#1f3a52" />
+      <stop offset="100%" stop-color="#122538" />
+    </linearGradient>
+    <linearGradient id="ds-grad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#133c30" />
+      <stop offset="100%" stop-color="#0b241c" />
+    </linearGradient>
+    <linearGradient id="db-grad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#2a251a" />
+      <stop offset="100%" stop-color="#1a160f" />
+    </linearGradient>
+
+    <!-- Glowing Filters -->
+    <filter id="glow-green" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="0" stdDeviation="6" flood-color="#4edea3" flood-opacity="0.4" />
+    </filter>
+    <filter id="glow-cyan" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="0" stdDeviation="6" flood-color="#4cd7f6" flood-opacity="0.4" />
+    </filter>
+    <filter id="glow-orange" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="0" stdDeviation="6" flood-color="#ffb95f" flood-opacity="0.4" />
+    </filter>
+    
+    <!-- Marker for Arrowheads -->
+    <marker id="arrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#4cd7f6" />
+    </marker>
+    <marker id="arrow-green" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#4edea3" />
+    </marker>
+    <marker id="arrow-orange" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#ffb95f" />
+    </marker>
+  </defs>
+
+  <!-- Title Section -->
+  <rect x="20" y="20" width="960" height="60" rx="12" fill="#162238" stroke="#1f3354" stroke-width="1.5" />
+  <text x="40" y="58" font-size="24" font-weight="bold" fill="url(#title-grad)">EcoCatch System Architecture</text>
+  <text x="960" y="55" font-size="12" text-anchor="end" fill="#8ba0c2">Multi-Agent Collaboration &amp; Data Structures</text>
+
+  <!-- LAYER 1: PRESENTATION / UI LAYER -->
+  <g id="layer-ui">
+    <rect x="20" y="100" width="960" height="110" rx="16" fill="url(#ui-grad)" stroke="#233a61" stroke-width="2" />
+    <text x="35" y="125" font-size="12" font-weight="bold" fill="#8ba0c2" letter-spacing="1">1. PRESENTATION LAYER (RWD WEB APP)</text>
+    
+    <!-- Scan Page -->
+    <rect x="40" y="140" width="210" height="55" rx="8" fill="#132038" stroke="#4cd7f6" stroke-width="1" />
+    <text x="50" y="162" font-size="13" font-weight="bold" fill="#ffffff">智慧掃描首頁 (Scan/Home)</text>
+    <text x="50" y="180" font-size="11" fill="#8ba0c2">Camera API, Canvas Frame</text>
+    
+    <!-- Map Page -->
+    <rect x="275" y="140" width="210" height="55" rx="8" fill="#132038" stroke="#4cd7f6" stroke-width="1" />
+    <text x="285" y="162" font-size="13" font-weight="bold" fill="#ffffff">幸福減碳地圖 (Eco Map)</text>
+    <text x="285" y="180" font-size="11" fill="#8ba0c2">Leaflet.js, Route Overlay</text>
+    
+    <!-- Reward Shop -->
+    <rect x="510" y="140" width="210" height="55" rx="8" fill="#132038" stroke="#4cd7f6" stroke-width="1" />
+    <text x="520" y="162" font-size="13" font-weight="bold" fill="#ffffff">減碳福利社 (Eco Shop)</text>
+    <text x="520" y="180" font-size="11" fill="#8ba0c2">Coupon Wallet, QR Code Gen</text>
+    
+    <!-- Dashboard -->
+    <rect x="745" y="140" width="215" height="55" rx="8" fill="#132038" stroke="#4cd7f6" stroke-width="1" />
+    <text x="755" y="162" font-size="13" font-weight="bold" fill="#ffffff">個人減碳森林 (Dashboard)</text>
+    <text x="755" y="180" font-size="11" fill="#8ba0c2">Interactive Tree SVG, Timeline</text>
+  </g>
+
+  <!-- LAYER 2: ORCHESTRATION LAYER -->
+  <g id="layer-controller">
+    <rect x="20" y="235" width="960" height="55" rx="12" fill="#182d4a" stroke="#4cd7f6" stroke-width="1.5" filter="url(#glow-cyan)" />
+    <text x="500" y="268" font-size="15" font-weight="bold" fill="#ffffff" text-anchor="middle">主控制器: app.js (App Coordinator &amp; Event Bus)</text>
+    <text x="960" y="267" font-size="10" text-anchor="end" fill="#4cd7f6" font-style="italic">Orchestrates Tab Switching &amp; Agent Triggers</text>
+  </g>
+
+  <!-- LAYER 3: MULTI-AGENT SYNERGY LAYER -->
+  <g id="layer-agents">
+    <rect x="20" y="315" width="960" height="190" rx="16" fill="url(#agent-grad)" stroke="#1a4263" stroke-width="2" />
+    <text x="35" y="340" font-size="12" font-weight="bold" fill="#85aed4" letter-spacing="1">2. MULTI-AI AGENT COLLABORATION LAYER</text>
+    
+    <!-- Vision Agent -->
+    <rect x="40" y="360" width="280" height="125" rx="10" fill="#14283c" stroke="#4edea3" stroke-width="1.5" filter="url(#glow-green)" />
+    <text x="55" y="385" font-size="14" font-weight="bold" fill="#4edea3">視覺辨識智慧體</text>
+    <text x="55" y="405" font-size="11" fill="#85aed4">Vision Classification Agent (vision-agent.js)</text>
+    <text x="55" y="430" font-size="11" fill="#ffffff">• 模擬 CNN 進行圖像材質預辨識</text>
+    <text x="55" y="450" font-size="11" fill="#ffffff">• 走訪垃圾材質二元分類樹</text>
+    <text x="55" y="470" font-size="11" fill="#ffffff">• 查詢處理步驟與減碳係數</text>
+    
+    <!-- LBS Agent -->
+    <rect x="360" y="360" width="280" height="125" rx="10" fill="#14283c" stroke="#4cd7f6" stroke-width="1.5" filter="url(#glow-cyan)" />
+    <text x="375" y="385" font-size="14" font-weight="bold" fill="#4cd7f6">空間導航智慧體</text>
+    <text x="375" y="405" font-size="11" fill="#85aed4">LBS Spatial Navigation Agent (app.js)</text>
+    <text x="375" y="430" font-size="11" fill="#ffffff">• 二維 GPS 空間鄰近度計算</text>
+    <text x="375" y="450" font-size="11" fill="#ffffff">• 檢索支援分類物品之回收站</text>
+    <text x="375" y="470" font-size="11" fill="#ffffff">• 規劃最佳步行路線與引導</text>
+    
+    <!-- Gamification Agent -->
+    <rect x="680" y="360" width="280" height="125" rx="10" fill="#14283c" stroke="#ffb95f" stroke-width="1.5" filter="url(#glow-orange)" />
+    <text x="695" y="385" font-size="14" font-weight="bold" fill="#ffb95f">行為激勵智慧體</text>
+    <text x="695" y="405" font-size="11" fill="#85aed4">Gamification Reward Agent (app.js)</text>
+    <text x="695" y="430" font-size="11" fill="#ffffff">• 接收投遞成功訊號 / 驗證照片</text>
+    <text x="695" y="450" font-size="11" fill="#ffffff">• 計算減碳克數 (g CO2e) &amp; 發點</text>
+    <text x="695" y="470" font-size="11" fill="#ffffff">• 維護即時排行榜與優惠券發行</text>
+  </g>
+
+  <!-- LAYER 4: DATA STRUCTURES ENGINE -->
+  <g id="layer-ds">
+    <rect x="20" y="530" width="620" height="210" rx="16" fill="url(#ds-grad)" stroke="#174f3e" stroke-width="2" />
+    <text x="35" y="555" font-size="12" font-weight="bold" fill="#5fbda3" letter-spacing="1">3. CUSTOM DATA STRUCTURES ENGINE</text>
+    
+    <!-- Decision Tree -->
+    <rect x="40" y="575" width="180" height="60" rx="8" fill="#0c251d" stroke="#4edea3" stroke-width="1" />
+    <text x="50" y="598" font-size="12" font-weight="bold" fill="#ffffff">Decision Tree (二元決策樹)</text>
+    <text x="50" y="615" font-size="10" fill="#5fbda3">File: decisionTree.js</text>
+    <text x="50" y="628" font-size="10" fill="#dae2fd">垃圾材質精準分類 | O(log N)</text>
+    
+    <!-- HashMap -->
+    <rect x="240" y="575" width="180" height="60" rx="8" fill="#0c251d" stroke="#4edea3" stroke-width="1" />
+    <text x="250" y="598" font-size="12" font-weight="bold" fill="#ffffff">HashMap (自訂雜湊表)</text>
+    <text x="250" y="615" font-size="10" fill="#5fbda3">File: hashMap.js</text>
+    <text x="250" y="628" font-size="10" fill="#dae2fd">回收指南/點數快速查詢 | O(1)</text>
+
+    <!-- KD-Tree -->
+    <rect x="440" y="575" width="180" height="60" rx="8" fill="#0c251d" stroke="#4edea3" stroke-width="1" />
+    <text x="450" y="598" font-size="12" font-weight="bold" fill="#ffffff">KD-Tree (2維空間索引樹)</text>
+    <text x="450" y="615" font-size="10" fill="#5fbda3">File: kdTree.js</text>
+    <text x="450" y="628" font-size="10" fill="#dae2fd">最近鄰回收點檢索 | O(log N)</text>
+    
+    <!-- Graph -->
+    <rect x="140" y="660" width="180" height="65" rx="8" fill="#0c251d" stroke="#4edea3" stroke-width="1" />
+    <text x="150" y="680" font-size="12" font-weight="bold" fill="#ffffff">Graph (鄰接表網格圖)</text>
+    <text x="150" y="695" font-size="10" fill="#5fbda3">File: graph.js</text>
+    <text x="150" y="708" font-size="10" fill="#dae2fd">步行網格與 Dijkstra 最短路徑</text>
+    
+    <!-- Min-Heap -->
+    <rect x="340" y="660" width="180" height="65" rx="8" fill="#0c251d" stroke="#4edea3" stroke-width="1" />
+    <text x="350" y="680" font-size="12" font-weight="bold" fill="#ffffff">Min-Heap (Dijkstra 佇列)</text>
+    <text x="350" y="695" font-size="10" fill="#5fbda3">File: graph.js</text>
+    <text x="350" y="708" font-size="10" fill="#dae2fd">最佳路徑節點權重排序 | O(log V)</text>
+  </g>
+
+  <!-- LAYER 5: STORAGE & MOCK DATA -->
+  <g id="layer-storage">
+    <rect x="660" y="530" width="320" height="210" rx="16" fill="url(#db-grad)" stroke="#5c4524" stroke-width="2" />
+    <text x="675" y="555" font-size="12" font-weight="bold" fill="#ffb95f" letter-spacing="1">4. STORAGE &amp; MOCK DATA LAYER</text>
+    
+    <!-- LocalStorage -->
+    <rect x="680" y="580" width="280" height="65" rx="8" fill="#241c10" stroke="#ffb95f" stroke-width="1" />
+    <text x="690" y="602" font-size="12" font-weight="bold" fill="#ffffff">HTML5 LocalStorage (瀏覽器持久化)</text>
+    <text x="690" y="618" font-size="10" fill="#ffb95f">持久化用戶狀態</text>
+    <text x="690" y="632" font-size="10" fill="#dae2fd">用戶積分、累計減碳量、兌換之優惠券</text>
+    
+    <!-- MockData -->
+    <rect x="680" y="660" width="280" height="65" rx="8" fill="#241c10" stroke="#ffb95f" stroke-width="1" />
+    <text x="690" y="682" font-size="12" font-weight="bold" fill="#ffffff">Static Mock Data &amp; Max-Heap</text>
+    <text x="690" y="698" font-size="10" fill="#ffb95f">File: mockData.js / maxHeap.js</text>
+    <text x="690" y="712" font-size="10" fill="#dae2fd">站點座標、競賽用戶資料、Max-Heap樹</text>
+  </g>
+
+  <!-- FLOW CONNECTING ARROWS -->
+  
+  <!-- UI Layer to app.js -->
+  <path d="M 145 210 L 145 227" stroke="#4cd7f6" stroke-width="2" fill="none" marker-end="url(#arrow)" />
+  <path d="M 380 210 L 380 227" stroke="#4cd7f6" stroke-width="2" fill="none" marker-end="url(#arrow)" />
+  <path d="M 615 210 L 615 227" stroke="#4cd7f6" stroke-width="2" fill="none" marker-end="url(#arrow)" />
+  <path d="M 850 210 L 850 227" stroke="#4cd7f6" stroke-width="2" fill="none" marker-end="url(#arrow)" />
+
+  <!-- app.js to Agents -->
+  <path d="M 180 290 L 180 307" stroke="#4cd7f6" stroke-width="2" fill="none" marker-end="url(#arrow)" />
+  <path d="M 500 290 L 500 307" stroke="#4cd7f6" stroke-width="2" fill="none" marker-end="url(#arrow)" />
+  <path d="M 820 290 L 820 307" stroke="#4cd7f6" stroke-width="2" fill="none" marker-end="url(#arrow)" />
+  
+  <!-- Vision Agent to DS (Decision Tree & HashMap) -->
+  <path d="M 130 485 L 130 567" stroke="#4edea3" stroke-width="1.5" stroke-dasharray="2 2" fill="none" marker-end="url(#arrow-green)" />
+  <text x="135" y="515" font-size="9" fill="#4edea3">二元樹走訪</text>
+  
+  <path d="M 240 485 L 240 567" stroke="#4edea3" stroke-width="1.5" stroke-dasharray="2 2" fill="none" marker-end="url(#arrow-green)" />
+  <text x="245" y="515" font-size="9" fill="#4edea3">指南 Key 查詢</text>
+
+  <!-- LBS Agent to DS (KD-Tree & Graph & Min-Heap) -->
+  <path d="M 500 485 L 500 567" stroke="#4edea3" stroke-width="1.5" stroke-dasharray="2 2" fill="none" marker-end="url(#arrow-green)" />
+  <text x="505" y="515" font-size="9" fill="#4edea3">最近站點搜尋</text>
+  
+  <path d="M 390 485 L 390 653" stroke="#4edea3" stroke-width="1.5" stroke-dasharray="2 2" fill="none" marker-end="url(#arrow-green)" />
+  <text x="330" y="515" font-size="9" fill="#4edea3">路徑規劃 (Dijkstra)</text>
+
+  <!-- Gamification Agent to Storage (LocalStorage & Max-Heap) -->
+  <path d="M 820 485 L 820 572" stroke="#ffb95f" stroke-width="1.5" stroke-dasharray="2 2" fill="none" marker-end="url(#arrow-orange)" />
+  <text x="825" y="515" font-size="9" fill="#ffb95f">持久化寫入/更新</text>
+  
+  <path d="M 900 485 L 900 653" stroke="#ffb95f" stroke-width="1.5" stroke-dasharray="2 2" fill="none" marker-end="url(#arrow-orange)" />
+  <text x="905" y="515" font-size="9" fill="#ffb95f">更新排行榜</text>
+
+  <!-- Inter-Agent communication (Sequence Flow representation) -->
+  <path d="M 320 422 L 352 422" stroke="#4cd7f6" stroke-width="2" fill="none" marker-end="url(#arrow)" />
+  <text x="336" y="416" font-size="9" font-weight="bold" fill="#4cd7f6" text-anchor="middle">1.材質標籤</text>
+  
+  <path d="M 640 422 L 672 422" stroke="#4cd7f6" stroke-width="2" fill="none" marker-end="url(#arrow)" />
+  <text x="656" y="416" font-size="9" font-weight="bold" fill="#4cd7f6" text-anchor="middle">2.導航抵達</text>
+
+</svg>
