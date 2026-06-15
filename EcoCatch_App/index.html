@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html class="dark" lang="zh-Hant">
+
+<head>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport" />
+  <title>EcoCatch - 隨手一拍、精準分類</title>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+
+  <!-- Leaflet CSS & JS CDNs -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+  <!-- Fonts & Material Icons -->
+  <link
+    href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&family=Noto+Sans+TC:wght@100..900&display=swap"
+    rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+    rel="stylesheet" />
+
+  <!-- Tailwind Theme Configurations -->
+  <script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "on-error": "#690005",
+            "primary-container": "#10b981",
+            "error-container": "#93000a",
+            "on-secondary-fixed": "#001f26",
+            "error": "#ffb4ab",
+            "secondary": "#4cd7f6",
+            "surface-container": "#171f33",
+            "surface": "#0b1326",
+            "on-secondary": "#003640",
+            "tertiary": "#ffb95f",
+            "surface-container-low": "#131b2e",
+            "surface-container-high": "#222a3d",
+            "primary": "#4edea3",
+            "on-surface": "#dae2fd",
+            "on-surface-variant": "#bbcabf",
+            "background": "#0b1326",
+          },
+          borderRadius: {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "2xl": "1rem",
+            "3xl": "1.5rem",
+            "full": "9999px"
+          },
+          spacing: {
+            "base": "4px",
+            "gutter": "20px",
+            "md": "16px",
+            "sm": "8px",
+            "xs": "4px",
+            "lg": "24px",
+            "container-max": "1280px",
+            "xl": "40px"
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- External stylesheet -->
+  <link rel="stylesheet" href="./index.css" />
+</head>
+
+<body class="bg-background text-on-surface select-none">
+
+  <!-- ==================== LOGIN SCREEN ==================== -->
+  <section id="login-container"
+    class="min-h-screen flex items-center justify-center px-6 py-12 relative overflow-hidden bg-background">
+    <!-- Background glow circles -->
+    <div class="absolute -right-24 -top-24 w-96 h-96 bg-primary/10 blur-[120px] rounded-full"></div>
+    <div class="absolute -left-24 -bottom-24 w-96 h-96 bg-secondary/10 blur-[120px] rounded-full"></div>
+
+    <div class="glass-panel inner-glow rounded-3xl p-8 w-full max-w-md relative z-10 transition-all duration-300">
+      <!-- Title & Logo -->
+      <div class="flex flex-col items-center gap-2 mb-8 text-center">
+        <span class="material-symbols-outlined text-primary text-5xl glow-emerald animate-pulse"
+          style="font-variation-settings: 'FILL' 1;">eco</span>
+        <h1 class="font-display-lg text-3xl font-bold tracking-tight text-white mt-2">EcoCatch</h1>
+        <p class="text-xs text-on-surface-variant font-bold tracking-wider uppercase">隨手一拍、精準分類 | 智慧減碳生活</p>
+      </div>
+
+      <!-- Login Form -->
+      <form id="login-form" class="space-y-5" onsubmit="return false;">
+        <!-- Email/Account Input -->
+        <div class="space-y-1.5">
+          <label for="login-email" class="text-xs font-bold text-on-surface-variant">帳號 / 電子信箱</label>
+          <div class="relative flex items-center">
+            <span class="material-symbols-outlined absolute left-3.5 text-on-surface-variant text-lg">mail</span>
+            <input type="text" id="login-email" required
+              class="w-full bg-surface-container/60 border border-white/10 rounded-2xl pl-11 pr-4 py-3 text-sm text-white placeholder-on-surface-variant/40 outline-none focus:border-secondary focus:ring-1 focus:ring-secondary transition-all"
+              placeholder="請輸入您的電子信箱" value="ecouser@ntu.edu.tw" />
+          </div>
+        </div>
+
+        <!-- Password Input -->
+        <div class="space-y-1.5">
+          <div class="flex justify-between items-center">
+            <label for="login-password" class="text-xs font-bold text-on-surface-variant">密碼</label>
+            <a href="#" class="text-[10px] text-secondary font-bold hover:underline"
+              onclick="alert('忘記密碼功能模擬：請輸入任意密碼即可登入。')">忘記密碼？</a>
+          </div>
+          <div class="relative flex items-center">
+            <span class="material-symbols-outlined absolute left-3.5 text-on-surface-variant text-lg">lock</span>
+            <input type="password" id="login-password" required
+              class="w-full bg-surface-container/60 border border-white/10 rounded-2xl pl-11 pr-4 py-3 text-sm text-white placeholder-on-surface-variant/40 outline-none focus:border-secondary focus:ring-1 focus:ring-secondary transition-all"
+              placeholder="請輸入您的密碼" value="password123" />
+          </div>
+        </div>
+
+        <!-- Remember Me Checkbox -->
+        <div class="flex items-center justify-between pt-1">
+          <label class="flex items-center gap-2 cursor-pointer select-none">
+            <input type="checkbox" id="remember-me" checked
+              class="rounded bg-surface-container border-white/10 text-primary focus:ring-0 focus:ring-offset-0 w-4 h-4" />
+            <span class="text-xs text-on-surface-variant font-bold">記住登入狀態</span>
+          </label>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" id="btn-login-submit"
+          class="w-full bg-primary hover:bg-primary-container text-on-primary-container font-bold py-3.5 rounded-2xl text-xs btn-hover-active flex items-center justify-center gap-2 shadow-[0_8px_25px_rgba(16,185,129,0.3)] mt-6 transition-all duration-300">
+          <span class="material-symbols-outlined text-lg">login</span>
+          登入探索
+        </button>
+      </form>
+
+      <!-- Third-Party Login Options -->
+      <div class="relative flex py-4 items-center">
+        <div class="flex-grow border-t border-white/5"></div>
+        <span
+          class="flex-shrink mx-4 text-[10px] text-on-surface-variant/40 uppercase tracking-widest font-bold">快速登入</span>
+        <div class="flex-grow border-t border-white/5"></div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-3">
+        <button type="button" id="btn-login-google"
+          class="flex items-center justify-center gap-2 py-3 bg-surface-container-high/40 hover:bg-surface-container-high border border-white/10 rounded-2xl text-xs font-bold text-on-surface btn-hover-active">
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+            <path
+              d="M12.24 10.285V13.4h6.887c-.275 1.565-1.88 4.604-6.887 4.604-4.33 0-7.866-3.577-7.866-8s3.536-8 7.866-8c2.46 0 4.105 1.025 5.047 1.926l2.427-2.334C17.955 2.192 15.34 1 12.24 1 6.033 1 12.24s5.033 11.24 11.24 11.24c6.478 0 10.793-4.537 10.793-10.986 0-.745-.08-1.3-.177-1.865H12.24z" />
+          </svg>
+          Google
+        </button>
+        <button type="button" id="btn-login-line"
+          class="flex items-center justify-center gap-2 py-3 bg-surface-container-high/40 hover:bg-surface-container-high border border-white/10 rounded-2xl text-xs font-bold text-on-surface btn-hover-active">
+          <span class="material-symbols-outlined text-lg text-emerald-400">chat</span>
+          LINE
+        </button>
+      </div>
+
+      <p class="text-center text-xs text-on-surface-variant mt-8 font-bold">
+        還沒有帳號嗎？ <a href="#" class="text-secondary hover:underline" onclick="alert('註冊功能模擬：請直接使用預設帳密進行登入。')">立即註冊</a>
+      </p>
+    </div>
+  </section>
+
+  <!-- ==================== MAIN APP WORKSPACE ==================== -->
+  <div id="app-layout" class="hidden pb-28">
+
+    <!-- Top Shared App Bar -->
+    <header
+      class="fixed top-0 w-full z-50 bg-surface/85 backdrop-blur-xl border-b border-white/10 flex justify-between items-center px-6 py-3.5">
+      <div class="flex items-center gap-2">
+        <span class="material-symbols-outlined text-primary text-2xl glow-emerald"
+          style="font-variation-settings: 'FILL' 1;">eco</span>
+        <h1 class="font-display-lg text-xl font-bold tracking-tight text-white">EcoCatch</h1>
+        <div class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse shadow-[0_0_8px_#10b981]"></div>
+      </div>
+      <div class="flex items-center gap-4">
+        <button class="relative hover:opacity-80 active:scale-95 transition-all">
+          <span class="material-symbols-outlined text-on-surface-variant text-2xl">notifications</span>
+          <span class="absolute top-0 right-0 w-1.5 h-1.5 bg-secondary rounded-full"></span>
+        </button>
+        <div class="w-9 h-9 rounded-full border border-primary/30 overflow-hidden shrink-0">
+          <img alt="User profile photo" class="w-full h-full object-cover"
+            src="https://lh3.googleusercontent.com/aida-public/AB6AXuDSpsk0rtovhENLQUUX4HBMMbvYuOaMegWh3tSxzZ2Fzjlr-zDGMCleGyIXfKkmB-1iqGIsL8qMocxH6glzSSpUuHHArrP28RxWp_tKlxJw0TzHS7EsfAGs_uLmze8oexmxKYWA9OZVCoJdX_hB4_pfISXZVG2RvCdM40RpoAJPW3rWnvEoz9MvhG73ulIsqY-HGRSeP7AcYJ50LC-7-ItB27-twQlbbT3zwV7YyKiYkz8ICjhKCV2Blvan4PLPTq36AcyBeOLEdwo" />
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Viewport containing Tab Screens -->
+    <main class="w-full">
+
+      <!-- ==================== SCREEN 1: HOME ==================== -->
+      <section id="tab-content-home" class="container mx-auto px-6 pt-20 space-y-6">
+
+        <!-- User stats box -->
+        <div class="glass-panel inner-glow rounded-3xl p-6 relative overflow-hidden">
+          <div class="absolute -right-12 -top-12 w-48 h-48 bg-primary/10 blur-[60px] rounded-full"></div>
+          <div class="absolute -left-12 -bottom-12 w-48 h-48 bg-secondary/10 blur-[60px] rounded-full"></div>
+
+          <div class="relative z-10 flex flex-col gap-2">
+            <span class="text-[10px] text-on-surface-variant/70 uppercase tracking-widest font-bold">個人累積減碳效益</span>
+            <div class="flex flex-col items-start">
+              <h2 class="text-3xl font-extrabold text-primary-container leading-none user-carbon-val">12.45 kg</h2>
+              <p class="text-xs text-primary font-bold opacity-90 mt-1">CO₂ 累計減碳量</p>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4 mt-6 pt-6 border-t border-white/5">
+              <div class="flex flex-col">
+                <div class="flex items-center gap-1.5 mb-0.5">
+                  <span class="material-symbols-outlined text-tertiary text-lg">stars</span>
+                  <span class="text-xs text-on-surface-variant font-bold">減碳點數</span>
+                </div>
+                <p class="text-2xl font-bold text-tertiary"><span class="user-points-val">420</span> <span
+                    class="text-xs opacity-60">pts</span></p>
+              </div>
+              <div class="flex flex-col">
+                <div class="flex items-center gap-1.5 mb-0.5">
+                  <span class="material-symbols-outlined text-secondary text-lg">leaderboard</span>
+                  <span class="text-xs text-on-surface-variant font-bold">減碳排名</span>
+                </div>
+                <p id="user-rank-val" class="text-2xl font-bold text-secondary">#14</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Action Buttons -->
+        <div class="grid grid-cols-3 gap-3 items-end">
+          <button id="shortcut-find-bin"
+            class="flex flex-col items-center gap-2 glass-panel inner-glow rounded-2xl p-4 btn-hover-active group">
+            <div
+              class="w-12 h-12 flex items-center justify-center rounded-full bg-surface-container-high text-secondary border border-white/10 group-hover:scale-105 transition-transform duration-200">
+              <span class="material-symbols-outlined text-2xl">delete_outline</span>
+            </div>
+            <span class="text-xs font-bold text-on-surface">找回收點</span>
+          </button>
+
+          <div class="flex flex-col items-center">
+            <button id="shortcut-scan"
+              class="w-20 h-20 rounded-full bg-primary text-on-primary flex items-center justify-center pulse-animation shadow-[0_0_25px_rgba(16,185,129,0.5)] btn-hover-active z-20">
+              <span class="material-symbols-outlined text-[36px]"
+                style="font-variation-settings: 'FILL' 1;">photo_camera</span>
+            </button>
+            <span class="text-xs text-primary-fixed mt-3.5 font-bold tracking-tight">拍照辨識</span>
+          </div>
+
+          <button id="shortcut-coupons"
+            class="flex flex-col items-center gap-2 glass-panel inner-glow rounded-2xl p-4 btn-hover-active group">
+            <div
+              class="w-12 h-12 flex items-center justify-center rounded-full bg-surface-container-high text-tertiary border border-white/10 group-hover:scale-105 transition-transform duration-200">
+              <span class="material-symbols-outlined text-2xl">confirmation_number</span>
+            </div>
+            <span class="text-xs font-bold text-on-surface">兌換商店</span>
+          </button>
+        </div>
+
+        <!-- Recent activity -->
+        <div class="space-y-3">
+          <div class="flex justify-between items-center">
+            <h3 class="text-sm font-bold text-on-surface">近期回收活動</h3>
+            <button class="text-primary text-xs font-bold hover:underline">查看全部</button>
+          </div>
+          <div id="recent-activity-list" class="space-y-2.5">
+            <!-- Item 1 -->
+            <div
+              class="glass-panel inner-glow rounded-2xl p-4 flex items-center justify-between group cursor-pointer transition-all hover:translate-x-0.5">
+              <div class="flex items-center gap-3">
+                <div class="w-11 h-11 rounded-xl bg-primary/10 flex items-center justify-center text-primary shrink-0">
+                  <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">recycling</span>
+                </div>
+                <div>
+                  <p class="text-xs font-bold text-on-surface">回收 寶特瓶 (PET)</p>
+                  <p class="text-[10px] text-on-surface-variant/60">公館水源站 • 2小時前</p>
+                </div>
+              </div>
+              <div class="flex items-center text-primary font-bold text-xs">
+                <span>+10pts</span>
+                <span class="material-symbols-outlined text-md">chevron_right</span>
+              </div>
+            </div>
+            <!-- Item 2 -->
+            <div
+              class="glass-panel inner-glow rounded-2xl p-4 flex items-center justify-between group cursor-pointer transition-all hover:translate-x-0.5">
+              <div class="flex items-center gap-3">
+                <div
+                  class="w-11 h-11 rounded-xl bg-secondary/10 flex items-center justify-center text-secondary shrink-0">
+                  <span class="material-symbols-outlined">camera</span>
+                </div>
+                <div>
+                  <p class="text-xs font-bold text-on-surface">成功辨識 鐵鋁罐</p>
+                  <p class="text-[10px] text-on-surface-variant/60">相機辨識 • 5小時前</p>
+                </div>
+              </div>
+              <div class="flex items-center text-secondary font-bold text-xs">
+                <span>+5pts</span>
+                <span class="material-symbols-outlined text-md">chevron_right</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Weekly Progress visualization -->
+        <div class="glass-panel inner-glow rounded-3xl p-5 flex items-center justify-between">
+          <div class="flex-1 flex flex-col justify-between h-20">
+            <p class="text-[10px] text-on-surface-variant/70 uppercase font-bold">本週分類達成率</p>
+            <div class="flex items-end gap-1.5 h-10 mt-2">
+              <div class="w-full bg-primary/20 rounded-t-sm h-[40%]"></div>
+              <div class="w-full bg-primary/20 rounded-t-sm h-[60%]"></div>
+              <div class="w-full bg-primary/20 rounded-t-sm h-[30%]"></div>
+              <div class="w-full bg-primary rounded-t-sm h-[85%] glow-emerald"></div>
+              <div class="w-full bg-primary/20 rounded-t-sm h-[50%]"></div>
+              <div class="w-full bg-primary/20 rounded-t-sm h-[45%]"></div>
+              <div class="w-full bg-primary/20 rounded-t-sm h-[20%]"></div>
+            </div>
+          </div>
+          <div class="ml-6 pl-6 border-l border-white/10 h-20 flex flex-col justify-center shrink-0">
+            <span class="text-2xl font-bold text-white leading-none">82%</span>
+            <span class="text-[10px] text-primary mt-1 font-bold">超越上週進度</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== SCREEN 2: SCAN ==================== -->
+      <section id="tab-content-scan" class="container mx-auto px-6 pt-20 hidden flex flex-col items-center space-y-6">
+
+        <!-- Viewfinder Section -->
+        <div
+          class="relative w-full aspect-[4/5] rounded-3xl overflow-hidden border border-white/10 bg-surface-container-low shadow-2xl shrink-0">
+          <!-- Real Video Stream -->
+          <video id="real-camera-view" autoplay playsinline class="hidden w-full h-full object-cover"></video>
+
+          <!-- Simulated Viewfinder Layer -->
+          <div id="simulated-viewfinder" class="w-full h-full relative">
+            <img alt="Camera Viewfinder" class="w-full h-full object-cover brightness-50 contrast-125"
+              src="https://lh3.googleusercontent.com/aida-public/AB6AXuBeMwJDMarvxP3hxxRAaGwcgw2OqEdMo_CpnXtgsVFcEuTqMAHGlz_6hztvAxuMBEBdd6zKLluUd09MFfHtXzGTYoR57n_Vf0tJc9JH_81geYK7zglb3LTdqUwYifBPJL1iq40RbRKnELwP_M--yseMGU1r31LpNbKAQ9RJzGZ5E_NAaPfhuBLSHaVzLrhuqw9yfTMAzFwK-ZJt-6Q6FwZ7gqdy7UZeAtfqK7vgle0V8hh7hH_tPyqQgsQ3OPaBXO9K3uri6D9UYwU" />
+
+            <!-- Targeting Graphic Overlays -->
+            <div class="absolute inset-0 pointer-events-none">
+              <div class="scan-line"></div>
+              <div
+                class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 border border-white/10 rounded-2xl flex items-center justify-center">
+                <div class="targeting-corner top-0 left-0 border-r-0 border-b-0 rounded-tl-xl"></div>
+                <div class="targeting-corner top-0 right-0 border-l-0 border-b-0 rounded-tr-xl"></div>
+                <div class="targeting-corner bottom-0 left-0 border-r-0 border-t-0 rounded-bl-xl"></div>
+                <div class="targeting-corner bottom-0 right-0 border-l-0 border-t-0 rounded-br-xl"></div>
+
+                <div class="w-6 h-[1.5px] bg-primary/40"></div>
+                <div class="h-6 w-[1.5px] bg-primary/40 absolute"></div>
+
+                <div
+                  class="absolute -bottom-10 glass-panel px-3 py-1.5 rounded-full flex items-center gap-1.5 border-primary/50 text-primary">
+                  <span class="material-symbols-outlined text-xs animate-spin">sync</span>
+                  <span class="text-[10px] font-bold tracking-widest font-mono">TARGET LOCKING...</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Decision Tree Horizontal Traversal visualizer -->
+          <div class="absolute top-4 left-4 right-4 flex justify-center z-20">
+            <div
+              class="glass-panel inner-glow px-4 py-2.5 rounded-2xl flex items-center gap-2 max-w-full overflow-x-auto scrollbar-hide">
+              <div class="flex items-center gap-1.5 shrink-0">
+                <span class="text-[10px] text-on-surface-variant font-bold">🌳 決策樹走訪路徑:</span>
+              </div>
+              <div id="flow-path-container" class="flex items-center gap-1.5 shrink-0">
+                <span
+                  class="px-2 py-0.5 bg-white/10 rounded text-on-surface-variant font-label-sm text-[10px]">無走訪</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Controls Block -->
+        <div class="w-full space-y-4">
+          <!-- Interactive simulation selector -->
+          <div class="glass-panel p-4 rounded-2xl space-y-3">
+            <div class="flex justify-between items-center">
+              <span class="text-xs font-bold text-on-surface-variant">模擬垃圾拍照輸入</span>
+              <span class="text-[10px] bg-primary/20 text-primary px-2 py-0.5 rounded font-bold">視覺辨識模擬</span>
+            </div>
+            <div class="flex gap-2">
+              <select id="camera-item-select"
+                class="bg-surface-container border border-white/10 rounded-xl px-3 py-2 text-xs flex-grow text-white outline-none focus:border-secondary">
+                <option value="pet_bottle">寶特瓶 (塑膠類)</option>
+                <option value="aluminum_can">鐵鋁罐 (金屬類)</option>
+                <option value="paper_box">紙便當盒 (紙容器)</option>
+                <option value="general_waste">衛生紙 (一般垃圾)</option>
+              </select>
+              <button id="btn-simulate-scan"
+                class="bg-secondary text-on-secondary px-4 py-2 rounded-xl text-xs font-bold btn-hover-active shrink-0">
+                送出辨識
+              </button>
+            </div>
+            <div class="text-center">
+              <span class="text-[10px] text-on-surface-variant/60">或點擊下方中央快門啟動手機實體相機 (需權限)</span>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <!-- Trigger camera button -->
+            <button id="btn-trigger-camera"
+              class="bg-primary hover:bg-primary-container text-on-primary-container font-bold py-3.5 rounded-2xl text-xs btn-hover-active flex items-center justify-center gap-2 shadow-lg shadow-primary/20">
+              <span class="material-symbols-outlined text-lg">photo_camera</span>
+              開啟實體相機
+            </button>
+            <!-- Interactive QnA trigger -->
+            <button id="btn-start-qna"
+              class="bg-surface-container-high hover:bg-surface-variant border border-white/10 font-bold py-3.5 rounded-2xl text-xs btn-hover-active flex items-center justify-center gap-2">
+              <span class="material-symbols-outlined text-lg">schema</span>
+              手動決策樹篩選
+            </button>
+          </div>
+
+          <!-- Interactive Decision Tree QnA Box (Initially Hidden) -->
+          <div id="decision-tree-qna" class="hidden w-full transition-all"></div>
+
+          <!-- HashMap classification results slide-up container (Initially Hidden) -->
+          <div id="result-drawer"
+            class="hidden w-full glass-panel inner-glow rounded-3xl p-5 relative overflow-hidden transition-all">
+            <div class="absolute -right-8 -top-8 w-36 h-36 bg-secondary/15 blur-[40px] rounded-full"></div>
+
+            <div class="space-y-4 relative z-10">
+              <div>
+                <div class="flex items-center gap-1.5 mb-1">
+                  <span id="result-material-badge"
+                    class="px-2 py-0.5 bg-secondary/20 text-secondary rounded-md text-[9px] font-bold tracking-widest uppercase">Verified
+                    Plastic</span>
+                </div>
+                <h2 id="result-item-name" class="text-xl font-bold text-white">寶特瓶</h2>
+                <p id="result-english-name" class="text-xs text-on-surface-variant font-bold">PET Bottle</p>
+                <p id="result-chinese-desc" class="text-[10px] text-on-surface-variant/70 italic">(聚乙烯對苯二甲酸酯)</p>
+              </div>
+
+              <!-- Stats grid -->
+              <div class="grid grid-cols-2 gap-3">
+                <div class="glass-panel border-white/5 bg-white/5 rounded-xl px-4 py-2.5">
+                  <p class="text-[9px] text-on-surface-variant font-bold uppercase tracking-wider mb-0.5">預計發放獎勵</p>
+                  <div class="flex items-center gap-1 text-primary">
+                    <span id="result-points-val" class="font-bold text-lg">+10</span>
+                    <span class="text-[10px]">Points</span>
+                  </div>
+                </div>
+                <div class="glass-panel border-white/5 bg-white/5 rounded-xl px-4 py-2.5">
+                  <p class="text-[9px] text-on-surface-variant font-bold uppercase tracking-wider mb-0.5">預計減碳效益</span>
+                  <div class="flex items-center gap-1 text-secondary">
+                    <span id="result-carbon-val" class="font-bold text-lg">-0.05</span>
+                    <span class="text-[10px]">kg CO₂</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- HashMap preparation steps -->
+              <div class="space-y-2">
+                <h3 class="text-xs font-bold text-on-surface-variant flex items-center gap-1.5">
+                  <span class="material-symbols-outlined text-sm">assignment</span>
+                  垃圾分類 HashMap 處理指引
+                </h3>
+                <div id="result-steps-list" class="space-y-2">
+                  <!-- Loaded dynamically -->
+                </div>
+              </div>
+
+              <button id="btn-go-to-recycle"
+                class="w-full bg-primary text-on-primary py-3.5 rounded-2xl text-xs font-bold flex items-center justify-center gap-2 shadow-[0_8px_25px_rgba(16,185,129,0.3)] btn-hover-active mt-4">
+                <span class="material-symbols-outlined text-md">directions_run</span>
+                搜尋並導航最近回收點 (KD-Tree & Dijkstra)
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== SCREEN 3: MAP ==================== -->
+      <section id="tab-content-map" class="absolute inset-0 pt-16 pb-20 hidden flex flex-col md:flex-row">
+
+        <!-- Sidebar on Desktop, Floating overlays container on Mobile -->
+        <div
+          class="absolute inset-x-4 top-20 bottom-24 pointer-events-none flex flex-col justify-between z-[1000] md:relative md:inset-auto md:w-[380px] md:h-full md:bg-surface-container/95 md:border-r md:border-white/10 md:flex md:flex-col md:justify-start md:gap-4 md:overflow-y-auto md:shrink-0 md:pointer-events-auto md:p-4 md:rounded-none">
+
+          <!-- Top Block (Algorithm Stats & Traces) -->
+          <div class="flex flex-col gap-2 pointer-events-auto w-full md:contents">
+            <!-- Consolidated Algorithm Inspector Panel -->
+            <div class="glass-panel rounded-2xl p-3 bg-surface-container/90 space-y-2">
+              <details id="algo-inspector-details" open>
+                <summary
+                  class="text-xs font-bold text-white flex justify-between cursor-pointer focus:outline-none items-center">
+                  <span class="flex items-center gap-1.5">
+                    <span class="material-symbols-outlined text-primary text-sm glow-emerald"
+                      style="font-variation-settings: 'FILL' 1;">hub</span>
+                    演算法分析器 (KD-Tree & Dijkstra)
+                  </span>
+                  <span class="text-secondary hover:underline toggle-label text-[10px] font-bold"></span>
+                </summary>
+                <div class="mt-3 space-y-3 pt-2 border-t border-white/5">
+                  <!-- Live algorithm statistics -->
+                  <div id="algo-search-stats"
+                    class="flex items-center justify-between gap-2 text-xs text-on-surface-variant">
+                    <div class="flex items-center gap-2">
+                      <span class="material-symbols-outlined text-primary text-sm">hub</span>
+                      <span class="font-label-sm text-on-surface-variant">請拖動起點或點選地圖進行 KD-Tree 最近鄰搜尋</span>
+                    </div>
+                  </div>
+
+                  <!-- KD-Tree Trace -->
+                  <div class="space-y-1">
+                    <p class="text-[10px] font-bold text-white flex items-center gap-1">
+                      <span>📍 KD-Tree 2D 搜尋步驟追蹤 (O(log N))</span>
+                    </p>
+                    <div id="kd-trace-list" class="space-y-1 max-h-20 md:max-h-40 overflow-y-auto pr-1">
+                      <p class="text-[9px] text-on-surface-variant">尚未觸發搜尋。請在分類完成後點選「帶我去回收」或直接點選地圖重新定位。</p>
+                    </div>
+                  </div>
+
+                  <!-- Dijkstra Trace -->
+                  <div class="space-y-1 pt-1.5 border-t border-white/5">
+                    <p class="text-[10px] font-bold text-white flex items-center gap-1">
+                      <span>🛣️ Dijkstra 路網最短路徑追蹤 ((V+E) log V)</span>
+                    </p>
+                    <div id="dijkstra-trace-list" class="space-y-1 max-h-20 md:max-h-40 overflow-y-auto pr-1">
+                      <p class="text-[9px] text-on-surface-variant">尚未計算路徑。系統會使用 Min-Heap Priority Queue 搜尋路網節點。</p>
+                    </div>
+                  </div>
+                </div>
+              </details>
+            </div>
+          </div>
+
+          <!-- Target details drawer panel (bottom block) -->
+          <div id="map-target-drawer" class="pointer-events-auto w-full transition-all duration-300 hidden">
+            <div class="glass-card p-4 rounded-3xl flex flex-col gap-3 shadow-2xl md:rounded-2xl">
+              <!-- Header section (always visible) -->
+              <div class="flex justify-between items-center cursor-pointer" id="drawer-header-toggle">
+                <div class="flex-grow">
+                  <h2 id="target-station-name" class="text-sm font-bold text-white">iTrash 公館水源站</h2>
+                  <p class="text-xs text-on-surface-variant flex items-center gap-1 mt-1 font-bold">
+                    <span class="material-symbols-outlined text-xs text-secondary">distance</span>
+                    <span id="target-station-distance">230m away</span> •
+                    <span class="text-secondary">預估步行 3 分鐘</span>
+                  </p>
+                </div>
+                <div class="flex items-center gap-2 shrink-0">
+                  <div class="bg-primary/20 px-2 py-1 rounded-lg border border-primary/30 flex flex-col items-center">
+                    <span class="text-[8px] text-primary uppercase font-bold">減碳獎勵</span>
+                    <span id="target-station-points" class="text-xs font-bold text-primary">+15</span>
+                  </div>
+                  <button id="btn-toggle-drawer-detail" class="text-on-surface-variant hover:text-white p-1">
+                    <span class="material-symbols-outlined text-xl transition-transform duration-300"
+                      id="drawer-toggle-icon">keyboard_arrow_down</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Collapsible details section -->
+              <div id="drawer-collapsible-content" class="flex flex-col gap-3 transition-all duration-300">
+                <div class="grid grid-cols-2 gap-3">
+                  <div class="bg-surface-container-high/40 p-3 rounded-xl border border-white/5">
+                    <span class="text-[9px] text-on-surface-variant block mb-0.5">營運狀態</span>
+                    <div class="flex items-center gap-1.5">
+                      <div class="w-1.5 h-1.5 rounded-full bg-primary shadow-[0_0_8px_#10b981]"></div>
+                      <span id="target-station-status" class="text-xs font-bold text-white">正常營運</span>
+                    </div>
+                  </div>
+                  <div class="bg-surface-container-high/40 p-3 rounded-xl border border-white/5">
+                    <span class="text-[9px] text-on-surface-variant block mb-0.5">機台可用容量</span>
+                    <span id="target-station-capacity" class="text-xs font-bold text-white">42% 空間可用</span>
+                  </div>
+                </div>
+
+                <button id="btn-verify-deposit"
+                  class="w-full bg-primary hover:bg-primary-container text-on-primary-container font-bold py-3.5 rounded-xl shadow-lg shadow-primary/20 btn-hover-active flex items-center justify-center gap-1.5 text-xs">
+                  <span class="material-symbols-outlined text-sm">check_circle</span>
+                  我已抵達並成功投遞垃圾
+                </button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Spatial Map Box -->
+        <div class="flex-grow h-full w-full relative z-0">
+          <div id="map-view" class="w-full h-full"></div>
+        </div>
+      </section>
+
+      <!-- ==================== SCREEN 4: LEADERBOARD ==================== -->
+      <section id="tab-content-leaderboard" class="container mx-auto px-6 pt-20 max-w-container-max hidden space-y-6">
+
+        <!-- Max-Heap visual tree overlay -->
+        <div>
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="text-sm font-bold text-on-background">最大堆積 (Max-Heap) 排行樹</h2>
+            <span
+              class="text-secondary text-[10px] px-2.5 py-0.5 rounded-full bg-secondary/10 border border-secondary/20 font-bold">O(log
+              N) Heap Sync</span>
+          </div>
+          <div class="glass-panel rounded-2xl p-4 relative overflow-hidden">
+            <div class="absolute inset-0 opacity-[0.03] pointer-events-none">
+              <div class="w-full h-full"
+                style="background-image: radial-gradient(#4edea3 1px, transparent 1px); background-size: 20px 20px;">
+              </div>
+            </div>
+
+            <!-- Binary Tree SVG draws here -->
+            <div id="heap-tree-svg-container" class="relative w-full h-[180px] flex justify-center items-center">
+              <!-- Drawn by script -->
+            </div>
+
+            <p class="text-center text-on-surface-variant/60 text-[9px] font-bold italic">
+              * 每次投遞獲得點數時，系統執行 sifting-up/sifting-down 重新建構 Max-Heap 樹結構。
+            </p>
+          </div>
+        </div>
+
+        <!-- User global ranking list -->
+        <div>
+          <h2 class="text-sm font-bold text-on-background mb-4">減碳點數排行榜</h2>
+          <div id="leaderboard-list-container" class="glass-panel rounded-2xl overflow-hidden divide-y divide-white/5">
+            <!-- Loaded dynamically -->
+          </div>
+        </div>
+
+        <!-- Coupon redeem shop -->
+        <div id="reward-shop" class="space-y-4">
+          <div class="flex items-center justify-between">
+            <h2 class="text-sm font-bold text-on-background">減碳幸福禮品店</h2>
+            <div class="flex items-center gap-1 text-primary text-xs font-bold">
+              <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">stars</span>
+              <span>可用點數: </span>
+              <span class="user-points-val">420</span>
+              <span>pts</span>
+            </div>
+          </div>
+
+          <!-- Horizontal scrollable coupons -->
+          <div id="coupon-shop-container" class="flex gap-4 overflow-x-auto pb-4 snap-x">
+            <!-- Loaded dynamically -->
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Persistent Bottom Navigation Bar -->
+    <nav
+      class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-safe pt-2 bg-surface-container/70 backdrop-blur-2xl border-t border-white/10 rounded-t-2xl shadow-[0_-4px_20px_rgba(0,0,0,0.5)] h-20">
+      <a id="nav-btn-home" class="flex flex-col items-center justify-center flex-1 py-1" href="#home">
+        <span class="material-symbols-outlined text-xl" style="font-variation-settings: 'FILL' 1;">home</span>
+        <span class="text-[10px] font-bold mt-0.5">首頁</span>
+      </a>
+      <a id="nav-btn-scan"
+        class="flex flex-col items-center justify-center flex-1 py-1 text-on-surface-variant/70 hover:text-primary transition-colors"
+        href="#scan">
+        <span class="material-symbols-outlined text-xl">center_focus_strong</span>
+        <span class="text-[10px] font-bold mt-0.5">拍照辨識</span>
+      </a>
+      <a id="nav-btn-map"
+        class="flex flex-col items-center justify-center flex-1 py-1 text-on-surface-variant/70 hover:text-primary transition-colors"
+        href="#map">
+        <span class="material-symbols-outlined text-xl">map</span>
+        <span class="text-[10px] font-bold mt-0.5">減碳地圖</span>
+      </a>
+      <a id="nav-btn-leaderboard"
+        class="flex flex-col items-center justify-center flex-1 py-1 text-on-surface-variant/70 hover:text-primary transition-colors"
+        href="#leaderboard">
+        <span class="material-symbols-outlined text-xl">leaderboard</span>
+        <span class="text-[10px] font-bold mt-0.5">排行榜</span>
+      </a>
+    </nav>
+  </div>
+
+  <!-- Bootstrap App Scripts -->
+  <script src="./js/mockData.js"></script>
+  <script src="./js/decisionTree.js"></script>
+  <script src="./js/hashMap.js"></script>
+  <script src="./js/kdTree.js"></script>
+  <script src="./js/graph.js"></script>
+  <script src="./js/maxHeap.js"></script>
+  <script src="./js/app.js"></script>
+</body>
+
+</html>
